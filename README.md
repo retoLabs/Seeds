@@ -1,2 +1,2 @@
 # Seeds
-Prototipos de funcionalidadesde RETO
+Prototipos de funcionalidades de RETO
