@@ -47,3 +47,8 @@
 [id0:1317876947][hora:20220406-130457][cgi:./Comun/cgibin/k1GetQryLite.cgi][fich:sessSeeds.sqlite]
 [id0:1317876947][hora:20220406-130457][cgi:./Comun/cgibin/k1GetQryLite.cgi][fich:sessSeeds.sqlite]
 [id0:1317876947][hora:20220406-130457][cgi:./Comun/cgibin/k1GetQryLite.cgi][fich:usersSeeds.sqlite]
+[id0:1727991557][hora:20220407-100121][cgi:./Comun/cgibin/k1EncriptPWD.cgi][user:admin]
+[id0:1727991557][hora:20220407-100121][cgi:./Comun/cgibin/k1GetQryLite.cgi][fich:usersSeeds.sqlite]
+[id0:1727991557][hora:20220407-100121][cgi:./Comun/cgibin/k1GetQryLite.cgi][fich:sessSeeds.sqlite]
+[id0:1727991557][hora:20220407-100121][cgi:./Comun/cgibin/k1GetQryLite.cgi][fich:sessSeeds.sqlite]
+[id0:1727991557][hora:20220407-100121][cgi:./Comun/cgibin/k1GetQryLite.cgi][fich:usersSeeds.sqlite]
