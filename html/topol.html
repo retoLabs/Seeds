@@ -14,11 +14,20 @@
 </head>
 <body>
 	<div id="topol"></div>
-	<form id="lista"></form>
+	<div><form id="lista"></form></div>
+
+	<div>
+		<span id="actions" style="background-color: gray; max-width:300px;display:inline">
+			<a href="javascript:nuevaTopol('CONJT')">Nuevo conjunto</a><br>
+			<a href="javascript:grabaTopol('CONJT')">Graba conjunto</a><br>
+			<a href="javascript:borraTopol('CONJT')">Borra conjunto</a><br>
+			<a href="javascript:listaTopol('CONJT')">Lista conjuntos</a><br>
+			<a href="javascript:showTopol('CONJT')">Visualiza conjunto</a><br>
+			<a href="javascript:updateTopol()">Actualiza conjunto</a><br>
+			<a href="javascript:addNodo('CONJT')">Nuevo nodo conjunto</a><br>
+		</span>
+	<span id="show" style="background-color: #cebada;">Sin topol</span>
 		
 	</div>
-	<a href="javascript:nuevaTopol('CONJT')">Nuevo conjunto</a><br>
-	<a href="javascript:grabaTopol('CONJT')">Graba conjunto</a><br>
-	<a href="javascript:listaTopol('CONJT')">Lista conjuntos</a><br>
 </body>
 </html>

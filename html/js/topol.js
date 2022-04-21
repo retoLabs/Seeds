@@ -18,6 +18,59 @@ function nuevaTopol(tipo){
 }
 
 
+function borraTopol(tipo){
+	switch (tipo){
+		case 'CONJT' :
+			ajax.borraTopol(utils.vgk.topolId);
+			break;
+	}
+	console.log('Borrando ',utils.vgk.topolId);
+}
+//------------------------------------------------------------------- Edit
+
+function addNodo(tipo){
+	var nodo = null;
+	switch (tipo){
+		case 'CONJT' :
+			var tag = prompt('Tag?');
+			if (tag){
+				nodo = new topol.rNodo(tag);
+				utils.vgk.topol.addNodo(nodo);
+			}
+			break;
+	}
+	console.log('addNodo ',utils.o2s(nodo));
+
+}
+//------------------------------------------------------------------- Show
+
+function showTopol(tipo){
+	console.log('Show', tipo);
+	switch(tipo){
+		case 'CONJT':
+			var nodos = utils.vgk.topol.getNodos();
+			if (!nodos.length) utils.r$('show').innerHTML = 'Topol sin nodos';
+			else {
+				var txt = '';
+				nodos.map(function(nodo){
+					txt += nodo.tag;
+				})
+				utils.r$('show').innerHTML = txt;
+			}
+	}
+}
+//------------------------------------------------------------------- Ajax
+
+
+function updateTopol(){
+	var topol = utils.vgk.topol;
+	var _id = utils.vgk.topolId;
+	console.log(utils.o2s(topol.clase2ObjDB()));
+	console.log(_id);
+	ajax.updateTopol(topol,_id);
+}
+
+
 function grabaTopol(tipo){
 	switch (tipo){
 		case 'CONJT' :
@@ -29,6 +82,8 @@ function grabaTopol(tipo){
 
 
 function ecoCargaTopol(objDB){
+	utils.vgk.topolId = objDB._id;
+	console.log('objDB.id:',utils.vgk.topolId);
 	var iam = objDB.meta.iam;
 
 	switch(iam){
@@ -38,13 +93,14 @@ function ecoCargaTopol(objDB){
 	}
 
 	t.objDB2Clase(objDB);
+	utils.vgk.topol = t;
 	console.log(utils.o2s(t));
 	utils.r$('topol').innerHTML = utils.o2s(t.meta);
 }
 
 function cargaTopol(elem){
 	console.log(elem.value);
-	ajax.getTopol(elem.value,ecoCargaTopol)
+	ajax.getTopol(elem.value,ecoCargaTopol);
 }
 
 function ecoListaTopols(objs){
@@ -80,5 +136,9 @@ function initTopol(){
 window.onload = initTopol;
 window.nuevaTopol = nuevaTopol;
 window.grabaTopol = grabaTopol;
+window.borraTopol = borraTopol;
 window.listaTopol = listaTopol;
+window.showTopol  = showTopol;
+window.updateTopol= updateTopol;
+window.addNodo    = addNodo;
 window.vgApp = vgApp;
