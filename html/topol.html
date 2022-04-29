@@ -9,25 +9,45 @@
 	<script type='text/javascript' src="lib/vue_2517.js"></script>
 	<script type='text/javascript' src='lib/libBase64.js'></script>
 
+<style type="text/css">
+	body { font-family: Courier, "Lucida Console", monospace }
+	#modal {position: absolute;display: none;}
+</style>
 	<script type='module' src='js/topol.js'></script>
 
 </head>
 <body>
+	<div>
+		<select id="topol_t" onchange="javascript:cambiaTipo(this.value)">
+			<option value="CONJT">Conjunto</option>
+			<option value="LISTA">Lista</option>
+			<option value="ARBOL">Arbol</option>
+			<option value="GRAFO">Grafo</option>
+		</select>
+
+	</div>
 	<div id="topol"></div>
 	<div><form id="lista"></form></div>
 
 	<div>
-		<span id="actions" style="background-color: gray; max-width:300px;display:inline">
-			<a href="javascript:nuevaTopol('CONJT')">Nuevo conjunto</a><br>
-			<a href="javascript:grabaTopol('CONJT')">Graba conjunto</a><br>
-			<a href="javascript:borraTopol('CONJT')">Borra conjunto</a><br>
-			<a href="javascript:listaTopol('CONJT')">Lista conjuntos</a><br>
-			<a href="javascript:showTopol('CONJT')">Visualiza conjunto</a><br>
-			<a href="javascript:updateTopol()">Actualiza conjunto</a><br>
-			<a href="javascript:addNodo('CONJT')">Nuevo nodo conjunto</a><br>
+		<span id="actions">
+			<a href="javascript:nuevaTopol()">Nueva topologia</a><br>
+			<a href="javascript:grabaTopol()">Graba topologia</a><br>
+			<a href="javascript:borraTopol()">Borra topologia</a><br>
+			<a href="javascript:listaTopol()">Lista topologias</a><br>
+			<a href="javascript:showTopol()">Visualiza topologia</a><br>
+			<a href="javascript:updateTopol()">Actualiza topologia</a><br>
+			<a href="javascript:addNodo()">Nuevo nodo topologia</a><br>
+			<a href="javascript:editTopol()">Edita topologia</a><br>
 		</span>
-	<span id="show" style="background-color: #cebada;">Sin topol</span>
+	<span id="show" style="background-color: #cebada;"></span>
 		
 	</div>
+	<div id="modal">
+			<input type="text" id="tag">Tag <br>
+			<button onclick="editAction('G')">Graba</button>
+			<button onclick="editAction('B')">Borra</button>
+	</div>
+
 </body>
 </html>

@@ -7,19 +7,23 @@ import topol from '/k1/libK1_Topol.js'
 import {vgApp,goPag} from '/js/seeds_VGlob.js'
 
 
-function nuevaTopol(tipo){
-	switch (tipo){
+function nuevaTopol(){
+	switch (utils.vgk.topol_t){
 		case 'CONJT' :
 			var tag = prompt('Tag?');
 			if (tag) utils.vgk.topol = new topol.rConjt(tag,[]);
+			break;
+		case 'LISTA' :
+			var tag = prompt('Tag?');
+			if (tag) utils.vgk.topol = new topol.rLista(tag,[]);
 			break;
 	}
 	utils.r$('topol').innerHTML =utils.o2s(utils.vgk.topol.meta);
 }
 
 
-function borraTopol(tipo){
-	switch (tipo){
+function borraTopol(){
+	switch (utils.vgk.topol_t){
 		case 'CONJT' :
 			ajax.borraTopol(utils.vgk.topolId);
 			break;
@@ -28,10 +32,17 @@ function borraTopol(tipo){
 }
 //------------------------------------------------------------------- Edit
 
-function addNodo(tipo){
+function addNodo(){
 	var nodo = null;
-	switch (tipo){
+	switch (utils.vgk.topol_t){
 		case 'CONJT' :
+			var tag = prompt('Tag?');
+			if (tag){
+				nodo = new topol.rNodo(tag);
+				utils.vgk.topol.addNodo(nodo);
+			}
+			break;
+		case 'LISTA' :
 			var tag = prompt('Tag?');
 			if (tag){
 				nodo = new topol.rNodo(tag);
@@ -44,20 +55,64 @@ function addNodo(tipo){
 }
 //------------------------------------------------------------------- Show
 
-function showTopol(tipo){
-	console.log('Show', tipo);
-	switch(tipo){
+function showTopol(){
+	switch (utils.vgk.topol_t){
 		case 'CONJT':
+		case 'LISTA':
+			var divShow = utils.r$('show');
+			divShow.innerHTML = null;
 			var nodos = utils.vgk.topol.getNodos();
-			if (!nodos.length) utils.r$('show').innerHTML = 'Topol sin nodos';
+			if (!nodos.length) divShow.innerHTML = 'Topol sin nodos';
 			else {
-				var txt = '';
 				nodos.map(function(nodo){
-					txt += nodo.tag;
+					var txt = document.createElement('span');
+					txt.style = "margin:10px;";
+					txt.innerHTML = nodo.tag;
+					divShow.appendChild(txt);
 				})
-				utils.r$('show').innerHTML = txt;
 			}
 	}
+}
+
+function editTopol(){
+	switch (utils.vgk.topol_t){
+		case 'CONJT':
+		case 'LISTA':
+			var divShow = utils.r$('show');
+			divShow.innerHTML = null;
+			var nodos = utils.vgk.topol.getNodos();
+			if (!nodos.length) divShow.innerHTML = 'Topol sin nodos';
+			else {
+				nodos.map(function(nodo){
+					var txt = document.createElement('span');
+					txt.style = "margin:10px;";
+					txt.innerHTML = nodo.tag;
+/*
+					txt.onclick = function(){
+						var nouTxt = prompt(nodo.tag);
+						if (nouTxt) {
+							nodo.tag = nouTxt;
+							utils.vgk.topol.updtNodoSelf(nodo);
+						}
+						else {
+							var ok = confirm('Borrar ?');
+							if (ok) utils.vgk.topol.borraNodo(nodo);
+						}
+					};
+*/
+					txt.onclick = function(){
+						utils.r$('modal').style.display= 'block';
+						utils.r$('tag').value = nodo.tag;
+					}
+					divShow.appendChild(txt);
+				})
+			}
+	}
+
+}
+
+function editAction(action){
+	console.log('editAction', action);
 }
 //------------------------------------------------------------------- Ajax
 
@@ -71,9 +126,12 @@ function updateTopol(){
 }
 
 
-function grabaTopol(tipo){
-	switch (tipo){
+function grabaTopol(){
+	switch (utils.vgk.topol_t){
 		case 'CONJT' :
+			ajax.grabaTopol(utils.vgk.topol);
+			break;
+		case 'LISTA' :
 			ajax.grabaTopol(utils.vgk.topol);
 			break;
 	}
@@ -90,16 +148,17 @@ function ecoCargaTopol(objDB){
 		case 'rConjt':
 			var t = new topol.rConjt('',[]);
 			break;
+		case 'rLista':
+			var t = new topol.rLista('',[]);
+			break;
 	}
 
 	t.objDB2Clase(objDB);
 	utils.vgk.topol = t;
-	console.log(utils.o2s(t));
 	utils.r$('topol').innerHTML = utils.o2s(t.meta);
 }
 
 function cargaTopol(elem){
-	console.log(elem.value);
 	ajax.getTopol(elem.value,ecoCargaTopol);
 }
 
@@ -121,9 +180,12 @@ function ecoListaTopols(objs){
 
 function listaTopol(tipo){
 
-	switch (tipo){
+	switch (utils.vgk.topol_t){
 		case 'CONJT' :
 			ajax.listaTopols('rConjt',ecoListaTopols);
+			break;
+		case 'LISTA' :
+			ajax.listaTopols('rLista',ecoListaTopols);
 			break;
 	}
 }
@@ -131,14 +193,29 @@ function listaTopol(tipo){
 
 function initTopol(){
 	utils.vgk.user = {'org':'DEMO01','keo':''};
+	utils.vgk.topol_t = 'CONJT';
+}
+
+function cambiaTipo(valor){
+	console.log('topol_t', valor);
+	utils.vgk.topol = null;
+	utils.vgk.topolId = null;
+	utils.vgk.topol_t = valor;
+	utils.r$('topol').innerHTML = null;
+	utils.r$('lista').innerHTML = null;
+	utils.r$('show').innerHTML = null;
 }
 
 window.onload = initTopol;
+window.cambiaTipo = cambiaTipo;
 window.nuevaTopol = nuevaTopol;
 window.grabaTopol = grabaTopol;
 window.borraTopol = borraTopol;
 window.listaTopol = listaTopol;
 window.showTopol  = showTopol;
+window.editTopol  = editTopol;
 window.updateTopol= updateTopol;
 window.addNodo    = addNodo;
+
+window.editAction = editAction;
 window.vgApp = vgApp;
