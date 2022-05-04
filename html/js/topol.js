@@ -87,22 +87,10 @@ function editTopol(){
 					var txt = document.createElement('span');
 					txt.style = "margin:10px;";
 					txt.innerHTML = nodo.tag;
-/*
-					txt.onclick = function(){
-						var nouTxt = prompt(nodo.tag);
-						if (nouTxt) {
-							nodo.tag = nouTxt;
-							utils.vgk.topol.updtNodoSelf(nodo);
-						}
-						else {
-							var ok = confirm('Borrar ?');
-							if (ok) utils.vgk.topol.borraNodo(nodo);
-						}
-					};
-*/
 					txt.onclick = function(){
 						utils.r$('modal').style.display= 'block';
 						utils.r$('tag').value = nodo.tag;
+						utils.r$('id0').value = nodo.id0;
 					}
 					divShow.appendChild(txt);
 				})
@@ -111,8 +99,30 @@ function editTopol(){
 
 }
 
-function editAction(action){
-	console.log('editAction', action);
+function editAction(acc){
+	var tag = utils.r$('tag').value;
+	var id0 = utils.r$('id0').value;
+	var nodo = utils.vgk.topol.getNodoById(id0);
+	console.log(utils.o2s(nodo));
+	if (acc == 'GRABA'){
+		nodo.tag = tag;
+		utils.vgk.topol.updtNodoSelf(nodo);
+		}
+
+	else if ( acc == 'BORRA'){
+		utils.vgk.topol.borraNodo(nodo);
+		}
+	
+	else if (acc == 'SUBE' && utils.vgk.topol_t == 'LISTA'){
+		utils.vgk.topol.subeNodo(nodo);
+	}
+	else if (acc == 'BAJA' && utils.vgk.topol_t == 'LISTA'){
+		utils.vgk.topol.bajaNodo(nodo);
+	}
+
+	console.log('editAction', acc,tag,id0);
+	utils.r$('modal').style.display= 'none';
+	showTopol();
 }
 //------------------------------------------------------------------- Ajax
 
@@ -141,7 +151,6 @@ function grabaTopol(){
 
 function ecoCargaTopol(objDB){
 	utils.vgk.topolId = objDB._id;
-	console.log('objDB.id:',utils.vgk.topolId);
 	var iam = objDB.meta.iam;
 
 	switch(iam){
