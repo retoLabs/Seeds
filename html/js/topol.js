@@ -64,8 +64,17 @@ function addNodo(){
 }
 
 //------------------------------------------------------------------- Show
-function montaArbolUL(ul,nodo){
-	var li = utils.rEl$('li'); li.innerHTML = nodo.tag;
+function montaArbolUL(ul,nodo,editON){
+	console.log('montaArbolUL',nodo.tag,editON);
+	var li = utils.rEl$('li'); 
+	li.innerHTML = nodo.tag;
+	if (editON){
+		li.onclick = function(ev){
+			ev.stopImmediatePropagation();
+			utils.r$('tag').value = nodo.tag;
+			utils.r$('id0').value = nodo.id0;
+		}
+	}
 	ul.appendChild(li);
 
 	if (nodo.hijos.length){
@@ -73,7 +82,7 @@ function montaArbolUL(ul,nodo){
 		li.appendChild(ulx);
 		var hijos = utils.vgk.topol.getHijosNodo(nodo);
 		hijos.map(function(nodox){
-			montaArbolUL(ulx,nodox);
+			montaArbolUL(ulx,nodox,editON);
 		})
 
 	}
@@ -112,13 +121,11 @@ function showTopol(){
 
 function editTopol(){
 	if (!utils.vgk.topol) return;
+	var divShow = utils.r$('show');
+	divShow.innerHTML = null;
 	switch (utils.vgk.topol_t){
 		case 'CONJT':
 		case 'LISTA':
-		case 'ARBOL':
-			var divShow = utils.r$('show');
-			divShow.innerHTML = null;
-			var frmEdit = utils.r$('frmEdit');
 			var nodos = utils.vgk.topol.getNodos();
 			if (!nodos.length) divShow.innerHTML = 'Topol sin nodos';
 			else {
@@ -134,36 +141,77 @@ function editTopol(){
 				})
 			}
 			break;
+		case 'ARBOL':
+			var tag = utils.vgk.topol.meta.tag;
+			var h3 = utils.rEl$('h3'); h3.innerHTML = tag;
+			divShow.appendChild(h3);
+			var ul = utils.rEl$('ul');
+			var raiz = utils.vgk.topol.getRaiz();
+			montaArbolUL(ul,raiz,true);
+			divShow.appendChild(ul);
+			break;
 
 	}
+	var frmEdit = utils.r$('frmEdit');
 	frmEdit.reset();
 	frmEdit.style.display= 'block';
 
 }
 
 function editAction(acc){
+	var t = utils.vgk.topol;
 	var tag = utils.r$('tag').value;
 	var id0 = utils.r$('id0').value;
-	var nodo = utils.vgk.topol.getNodoById(id0);
+	var nodo = t.getNodoById(id0);
 	console.log('editAction:', acc, utils.o2s(nodo));
 	if (acc == 'GRABA'){
 		nodo.tag = tag;
-		utils.vgk.topol.updtNodoSelf(nodo);
+		t.updtNodoSelf(nodo);
 		}
 
 	else if ( acc == 'BORRA'){
-		utils.vgk.topol.borraNodo(nodo);
+		t.borraNodo(nodo);
 		}
 	
 	else if (acc == 'SUBE' && utils.vgk.topol_t == 'LISTA'){
-		utils.vgk.topol.subeNodo(nodo);
+		t.subeNodo(nodo);
 		}
 	
 	else if (acc == 'BAJA' && utils.vgk.topol_t == 'LISTA'){
-		utils.vgk.topol.bajaNodo(nodo);
+		t.bajaNodo(nodo);
+		}
+	else if (acc == 'SUBE' && utils.vgk.topol_t == 'ARBOL'){
+		var padre = t.getNodoById(nodo.id1);
+		var h = padre.hijos;
+		console.log(utils.o2s(h));
+		var ix = h.indexOf(nodo.id0);
+		if (ix > 0){
+			var aux = h[ix-1];
+			h[ix-1] = nodo.id0;
+			h[ix] = aux;
+			padre.hijos = h;
+			t.updtNodoSelf(padre);
+			}
+		}
+	
+	else if (acc == 'BAJA' && utils.vgk.topol_t == 'ARBOL'){
+		var padre = t.getNodoById(nodo.id1);
+		var h = padre.hijos;
+		console.log(utils.o2s(h));
+		var ix = h.indexOf(nodo.id0);
+		if (ix < h.length){
+			var aux = h[ix+1];
+			h[ix+1] = nodo.id0;
+			h[ix] = aux;
+			padre.hijos = h;
+			}
+		}
+	else if (acc == 'HIJO' && utils.vgk.topol_t == 'ARBOL'){
+		var hijo = new topol.rNodo('Nuevo');
+		t.addNodoHijo(nodo,hijo);
 		}
 
-//	utils.r$('frmEdit').style.display= 'none';
+	utils.r$('frmEdit').style.display= 'none';
 	showTopol();
 }
 //------------------------------------------------------------------- Ajax

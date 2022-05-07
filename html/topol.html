@@ -11,25 +11,20 @@
 
 <style type="text/css">
 	body { font-family: Courier, "Lucida Console", monospace }
-	#frmEdit {position: absolute;display: none;}
+	#frmEdit {display: none;}
 </style>
 	<script type='module' src='js/topol.js'></script>
 
 </head>
 <body>
-	<div>
-		<select id="topol_t" onclick="javascript:cambiaTipo(this.value)">
+	<div style="float:left; width: 25%;border: 1px solid gray;padding: 20px;">
+		<select id="topol_t" style="font-size: 120%;margin-bottom: 10px;" onclick="javascript:cambiaTipo(this.value)">
 			<option value="CONJT" selected ="true">Conjunto</option>
 			<option value="LISTA">Lista</option>
 			<option value="ARBOL">Arbol</option>
 			<option value="GRAFO">Grafo</option>
 		</select>
 
-	</div>
-	<div id="topol"></div>
-	<div><form id="lista"></form></div>
-
-	<div>
 		<div id="actions">
 			<a href="javascript:nuevaTopol()">Nueva topologia</a><br>
 			<a href="javascript:grabaTopol()">Graba topologia</a><br>
@@ -40,19 +35,24 @@
 			<a href="javascript:addNodo()">Nuevo nodo topologia</a><br>
 			<a href="javascript:editTopol()">Edita topologia</a><br>
 		</div>
-
-	<div id="show" style="background-color: #cebada;">xxx</div>
-		
+		<div >
+			<form id="frmEdit">
+				<input type="text" id="tag">Tag <br>
+				<input type="text" id="id0">
+				<input type="button" onclick="editAction('GRABA')" value="Graba">
+				<input type="button" onclick="editAction('BORRA')" value="Borra">
+				<input type="button" onclick="editAction('SUBE')"  value="Sube">
+				<input type="button" onclick="editAction('BAJA')"  value="Baja">
+				<input type="button" onclick="editAction('HIJO')"  value="+Hijo">
+			</form>
+		</div>
 	</div>
-	<div >
-		<form id="frmEdit">
-			<input type="text" id="tag">Tag <br>
-			<input type="hidden" id="id0">
-			<input type="button" onclick="editAction('GRABA')" value="Graba">
-			<input type="button" onclick="editAction('BORRA')" value="Borra">
-			<input type="button" onclick="editAction('SUBE')"  value="Sube">
-			<input type="button" onclick="editAction('BAJA')"  value="Baja">
-		</form>
+
+	<div style="float: right;">
+		<div><form id="lista"></form></div>
+		<div id="topol"></div>
+		<div id="show" style="background-color: #cebada; padding: 20px;"></div>
+		
 	</div>
 
 </body>
