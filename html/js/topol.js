@@ -65,9 +65,23 @@ function addNodo(){
 
 //------------------------------------------------------------------- Show
 function montaArbolUL(ul,nodo,editON){
-	console.log('montaArbolUL',nodo.tag,editON);
 	var li = utils.rEl$('li'); 
-	li.innerHTML = nodo.tag;
+
+	if (nodo.hijos.length){
+		var btn = utils.rEl$('input');
+		btn.type = 'button';
+		btn.value = (nodo.stat == 'EXPAN')? '+' : '-';
+		btn.onclick = function (){
+			utils.vgk.topol.commuta(nodo);
+			showTopol();
+		}
+		li.appendChild(btn);
+	}
+
+	var txt = utils.rEl$('span');
+	txt.innerHTML = nodo.tag;
+	li.appendChild(txt);
+
 	if (editON){
 		li.onclick = function(ev){
 			ev.stopImmediatePropagation();
@@ -77,8 +91,10 @@ function montaArbolUL(ul,nodo,editON){
 	}
 	ul.appendChild(li);
 
-	if (nodo.hijos.length){
+
+	if (nodo.hijos.length && nodo.stat == 'EXPAN'){
 		var ulx = utils.rEl$('ul');
+		ulx.style.listStyle = 'none';
 		li.appendChild(ulx);
 		var hijos = utils.vgk.topol.getHijosNodo(nodo);
 		hijos.map(function(nodox){
@@ -86,6 +102,8 @@ function montaArbolUL(ul,nodo,editON){
 		})
 
 	}
+
+
 }
 
 function showTopol(){
@@ -111,6 +129,7 @@ function showTopol(){
 			var h3 = utils.rEl$('h3'); h3.innerHTML = tag;
 			divShow.appendChild(h3);
 			var ul = utils.rEl$('ul');
+			ul.style.listStyle = 'none';
 			var raiz = utils.vgk.topol.getRaiz();
 			montaArbolUL(ul,raiz);
 			divShow.appendChild(ul);
@@ -146,6 +165,7 @@ function editTopol(){
 			var h3 = utils.rEl$('h3'); h3.innerHTML = tag;
 			divShow.appendChild(h3);
 			var ul = utils.rEl$('ul');
+			ul.style.listStyle = 'none';
 			var raiz = utils.vgk.topol.getRaiz();
 			montaArbolUL(ul,raiz,true);
 			divShow.appendChild(ul);
@@ -169,17 +189,12 @@ function editAction(acc){
 		t.updtNodoSelf(nodo);
 		}
 
-	else if ( acc == 'BORRA'){
-		t.borraNodo(nodo);
-		}
+	else if ( acc == 'BORRA'){t.borraNodo(nodo);}
 	
-	else if (acc == 'SUBE' && utils.vgk.topol_t == 'LISTA'){
-		t.subeNodo(nodo);
-		}
+	else if (acc == 'SUBE'){t.subeNodo(nodo);}
 	
-	else if (acc == 'BAJA' && utils.vgk.topol_t == 'LISTA'){
-		t.bajaNodo(nodo);
-		}
+	else if (acc == 'BAJA'){t.bajaNodo(nodo);}
+	/*
 	else if (acc == 'SUBE' && utils.vgk.topol_t == 'ARBOL'){
 		var padre = t.getNodoById(nodo.id1);
 		var h = padre.hijos;
@@ -204,8 +219,10 @@ function editAction(acc){
 			h[ix+1] = nodo.id0;
 			h[ix] = aux;
 			padre.hijos = h;
+			t.updtNodoSelf(padre);
 			}
 		}
+*/
 	else if (acc == 'HIJO' && utils.vgk.topol_t == 'ARBOL'){
 		var hijo = new topol.rNodo('Nuevo');
 		t.addNodoHijo(nodo,hijo);
@@ -221,8 +238,6 @@ function updateTopol(){
 	if (!utils.vgk.topol||!utils.vgk.topolId) return;
 	var t = utils.vgk.topol;
 	var _id = utils.vgk.topolId;
-	console.log(utils.o2s(t.clase2ObjDB()));
-	console.log(_id);
 	ajax.updateTopol(t,_id);
 }
 
