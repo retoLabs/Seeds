@@ -22,6 +22,9 @@ function nuevaTopol(){
 		case 'ARBOL' :
 			t = new topol.rArbol(tag,[]);
 			break;
+		case 'GRAFO' :
+			t = new topol.rGrafo(tag,[]);
+			break;
 	}
 
 	if (t == {}) return null;
@@ -36,6 +39,7 @@ function borraTopol(){
 		case 'CONJT' :
 		case 'LISTA' :
 		case 'ARBOL' :
+		case 'GRAFO' :
 			ajax.borraTopol(utils.vgk.topolId);
 			break;
 	}
@@ -55,6 +59,10 @@ function addNodo(){
 			utils.vgk.topol.addNodo(nodo);
 			break;
 		case 'ARBOL' :
+			nodo = new topol.rNodo(tag);
+			utils.vgk.topol.addNodoSelf(nodo);
+			break;
+		case 'GRAFO' :
 			nodo = new topol.rNodo(tag);
 			utils.vgk.topol.addNodoSelf(nodo);
 			break;
@@ -106,13 +114,68 @@ function montaArbolUL(ul,nodo,editON){
 
 }
 
+
+function montaTablaGrafo(taula,editON){
+	var t = utils.vgk.topol;
+	var cap = utils.rEl$('thead');
+	var cos = utils.rEl$('tbody');
+	taula.appendChild(cap);
+	taula.appendChild(cos);
+
+	var nodos = t.getNodos();
+	var arcos = t.getArcos();
+	var arcIds = [];
+	arcos.map(function(arc){
+		var idArc = ''+arc.nodoI+':'+arc.nodoF;
+		arcIds.push(idArc);
+	})
+
+	var trh = utils.rEl$('tr');
+	var th0 = utils.rEl$('th');
+	trh.appendChild(th0);
+	nodos.map(function(nodo){
+		var thx = utils.rEl$('th');
+		thx.innerHTML = nodo.tag;
+		trh.appendChild(thx);
+		})
+	cap.appendChild(trh);
+
+	var trCount = 0;
+	nodos.map(function(nodo){
+		var trb = utils.rEl$('tr');
+		var td0 = utils.rEl$('td');
+		td0.innerHTML = nodo.tag;
+		trb.appendChild(td0);
+
+
+		for (var i=0;i<nodos.length;i++){
+			var tdx = utils.rEl$('td');
+			tdx.id = ''+trCount+':'+i;
+			var arcIx = arcIds.indexOf(tdx.id);
+			if (arcIx > -1)tdx.innerHTML= arcos[arcIx].tag;
+			if (editON){
+				tdx.onclick = function(ev){
+					utils.r$('tag').value = ev.target.id;
+					utils.r$('id0').value = null;
+					console.log(ev.target.id);
+					}
+				}
+
+			trb.appendChild(tdx);
+			}
+		cos.appendChild(trb);
+		trCount++;
+	})
+
+}
+
+
 function showTopol(){
 	if (!utils.vgk.topol) return;
 	var divShow = utils.r$('show');
 	divShow.innerHTML = null;
 	switch (utils.vgk.topol_t){
 		case 'CONJT':
-		case 'LISTA':
 			var nodos = utils.vgk.topol.getNodos();
 			if (!nodos.length) divShow.innerHTML = 'Topol sin nodos';
 			else {
@@ -122,6 +185,19 @@ function showTopol(){
 					txt.innerHTML = nodo.tag;
 					divShow.appendChild(txt);
 				})
+			}
+			break;
+		case 'LISTA':
+			var nodos = utils.vgk.topol.getNodos();
+			if (!nodos.length) divShow.innerHTML = 'Topol sin nodos';
+			else {
+				var ul = utils.rEl$('ol');
+				nodos.map(function(nodo){
+					var txt = document.createElement('li');
+					txt.innerHTML = nodo.tag;
+					ul.appendChild(txt);
+				})
+				divShow.appendChild(ul);
 			}
 			break;
 		case 'ARBOL':
@@ -135,6 +211,11 @@ function showTopol(){
 			divShow.appendChild(ul);
 			break;
 
+		case 'GRAFO':
+			var taula = utils.rEl$('table');
+			montaTablaGrafo(taula,false);
+			utils.r$('show').appendChild(taula);
+			break;
 	}
 }
 
@@ -142,10 +223,11 @@ function editTopol(){
 	if (!utils.vgk.topol) return;
 	var divShow = utils.r$('show');
 	divShow.innerHTML = null;
+	var t = utils.vgk.topol;
+
 	switch (utils.vgk.topol_t){
 		case 'CONJT':
-		case 'LISTA':
-			var nodos = utils.vgk.topol.getNodos();
+			var nodos = t.getNodos();
 			if (!nodos.length) divShow.innerHTML = 'Topol sin nodos';
 			else {
 				nodos.map(function(nodo){
@@ -160,15 +242,99 @@ function editTopol(){
 				})
 			}
 			break;
+		case 'LISTA':
+			var nodos = t.getNodos();
+			if (!nodos.length) divShow.innerHTML = 'Topol sin nodos';
+			else {
+				var ul = utils.rEl$('ol');
+				nodos.map(function(nodo){
+					var txt = document.createElement('li');
+					txt.innerHTML = nodo.tag;
+					txt.onclick = function(){
+						utils.r$('tag').value = nodo.tag;
+						utils.r$('id0').value = nodo.id0;
+					}
+					ul.appendChild(txt);
+				})
+				divShow.appendChild(ul);
+			}
+			break;
+
 		case 'ARBOL':
-			var tag = utils.vgk.topol.meta.tag;
+			var tag = t.meta.tag;
 			var h3 = utils.rEl$('h3'); h3.innerHTML = tag;
 			divShow.appendChild(h3);
 			var ul = utils.rEl$('ul');
 			ul.style.listStyle = 'none';
-			var raiz = utils.vgk.topol.getRaiz();
+			var raiz = t.getRaiz();
 			montaArbolUL(ul,raiz,true);
 			divShow.appendChild(ul);
+			break;
+
+		case 'GRAFO':
+			var taula = utils.rEl$('table');
+/*
+			var cap = utils.rEl$('thead');
+			var cos = utils.rEl$('tbody');
+			taula.appendChild(cap);
+			taula.appendChild(cos);
+
+			var nodos = t.getNodos();
+			var arcos = t.getArcos();
+
+			var arcsIds = [];
+			arcos.map(function(arco){
+				var idArc = ''+arco.ixI+':'+arco.ixF;
+				arcsIds.push(idArc);
+			})
+			var trh = utils.rEl$('tr');
+			var th0 = utils.rEl$('th');
+			trh.appendChild(th0);
+
+			nodos.map(function(nodo){
+				var thx = utils.rEl$('th');
+				thx.innerHTML = nodo.tag;
+					thx.onclick = function(ev){
+						ev.stopImmediatePropagation();
+						utils.r$('tag').value = nodo.tag;
+						utils.r$('id0').value = nodo.id0;
+					}
+				trh.appendChild(thx);
+			})
+			cap.appendChild(trh);
+
+			var trCount = 0;
+			nodos.map(function(nodo){
+				var trb = utils.rEl$('tr');
+				var td0 = utils.rEl$('td');
+				td0.innerHTML = nodo.tag;
+				td0.onclick = function(ev){
+					utils.r$('tag').value = nodo.tag;
+					utils.r$('id0').value = nodo.id0;
+				}
+				trb.appendChild(td0);
+
+				for (var i=0;i<nodos.length;i++){
+					var tdx = utils.rEl$('td');
+					tdx.id = ''+trCount+':'+i;
+					var ixArc = arcsIds.indexOf(tdx.id);
+					if ( ixArc > -1) tdx.innerHTML = arcos[ixArc].tag
+//					tdx.innerHTML = tdx.id;
+					tdx.onclick = function(ev){
+						utils.r$('tag').value = ev.target.id;
+						utils.r$('id0').value = null;
+						console.log(ev.target.id);
+						return false;
+					}
+					trb.appendChild(tdx);
+
+				}
+				cos.appendChild(trb);
+				trCount++;
+			})
+*/
+			montaTablaGrafo(taula,true);
+			utils.r$('show').appendChild(taula);
 			break;
 
 	}
@@ -182,7 +348,7 @@ function editAction(acc){
 	var t = utils.vgk.topol;
 	var tag = utils.r$('tag').value;
 	var id0 = utils.r$('id0').value;
-	var nodo = t.getNodoById(id0);
+	if (id0) var nodo = t.getNodoById(id0);
 	console.log('editAction:', acc, utils.o2s(nodo));
 	if (acc == 'GRABA'){
 		nodo.tag = tag;
@@ -194,38 +360,21 @@ function editAction(acc){
 	else if (acc == 'SUBE'){t.subeNodo(nodo);}
 	
 	else if (acc == 'BAJA'){t.bajaNodo(nodo);}
-	/*
-	else if (acc == 'SUBE' && utils.vgk.topol_t == 'ARBOL'){
-		var padre = t.getNodoById(nodo.id1);
-		var h = padre.hijos;
-		console.log(utils.o2s(h));
-		var ix = h.indexOf(nodo.id0);
-		if (ix > 0){
-			var aux = h[ix-1];
-			h[ix-1] = nodo.id0;
-			h[ix] = aux;
-			padre.hijos = h;
-			t.updtNodoSelf(padre);
-			}
-		}
-	
-	else if (acc == 'BAJA' && utils.vgk.topol_t == 'ARBOL'){
-		var padre = t.getNodoById(nodo.id1);
-		var h = padre.hijos;
-		console.log(utils.o2s(h));
-		var ix = h.indexOf(nodo.id0);
-		if (ix < h.length){
-			var aux = h[ix+1];
-			h[ix+1] = nodo.id0;
-			h[ix] = aux;
-			padre.hijos = h;
-			t.updtNodoSelf(padre);
-			}
-		}
-*/
+
 	else if (acc == 'HIJO' && utils.vgk.topol_t == 'ARBOL'){
 		var hijo = new topol.rNodo('Nuevo');
 		t.addNodoHijo(nodo,hijo);
+		}
+
+	else if (acc == 'ARCO' && utils.vgk.topol_t == 'GRAFO'){
+		var ixs = tag.split(':');
+		var ixI = parseInt(ixs[0]);
+		var ixF = parseInt(ixs[1]);
+		var nodoI = t.getNodoByIx(ixI);
+		var nodoF = t.getNodoByIx(ixF);
+		var arco = new topol.rArco('x',nodoI,nodoF,0);
+		console.log('Arco:',utils.o2s(arco));
+		t.addArcoSelf(arco);
 		}
 
 	utils.r$('frmEdit').style.display= 'none';
@@ -248,6 +397,7 @@ function grabaTopol(){
 		case 'CONJT' :
 		case 'LISTA' :
 		case 'ARBOL' :
+		case 'GRAFO' :
 			ajax.grabaTopol(utils.vgk.topol);
 			break;
 	}
@@ -268,6 +418,9 @@ function ecoCargaTopol(objDB){
 			break;
 		case 'rArbol':
 			var t = new topol.rArbol('',[]);
+			break;
+		case 'rGrafo':
+			var t = new topol.rGrafo('',[]);
 			break;
 	}
 
@@ -307,6 +460,9 @@ function listaTopol(tipo){
 			break;
 		case 'ARBOL' :
 			ajax.listaTopols('rArbol',ecoListaTopols);
+			break;
+		case 'GRAFO' :
+			ajax.listaTopols('rGrafo',ecoListaTopols);
 			break;
 	}
 }
