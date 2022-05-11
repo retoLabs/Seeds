@@ -21,32 +21,30 @@
 <body>
 	<div style="float:left; width: 25%;border: 1px solid gray;padding: 20px;">
 		<select id="topol_t" style="font-size: 120%;margin-bottom: 10px;" onclick="javascript:cambiaTipo(this.value)">
-			<option value="CONJT" selected ="true">Conjunto</option>
+			<option value="CONJT">Conjunto</option>
 			<option value="LISTA">Lista</option>
 			<option value="ARBOL">Arbol</option>
 			<option value="GRAFO">Grafo</option>
 		</select>
 
 		<div id="actions">
-			<a href="javascript:nuevaTopol()">Nueva topologia</a><br>
-			<a href="javascript:grabaTopol()">Graba topologia</a><br>
-			<a href="javascript:borraTopol()">Borra topologia</a><br>
-			<a href="javascript:listaTopol()">Lista topologias</a><br>
-			<a href="javascript:showTopol()">Visualiza topologia</a><br>
-			<a href="javascript:updateTopol()">Actualiza topologia</a><br>
-			<a href="javascript:addNodo()">Nuevo nodo topologia</a><br>
-			<a href="javascript:editTopol()">Edita topologia</a><br>
+			<a href="javascript:nuevaTopol()">Alta</a><br>
+			<a href="javascript:editTopol()">Edit</a><br>
+			<a href="javascript:borraTopol()">Baja</a><br>
+			<a href="javascript:updateTopol()">Update</a><br>
 		</div>
 		<div >
 			<form id="frmEdit">
 				<input type="text" id="tag">Tag <br>
-				<input type="text" id="id0">
+				<input type="text" id="id0">Id0 <br>
+				<input type="text" id="rol">Rol <br>
 				<input type="button" onclick="editAction('GRABA')" value="Graba">
 				<input type="button" onclick="editAction('BORRA')" value="Borra">
 				<input type="button" onclick="editAction('SUBE')"  value="Sube">
-				<input type="button" onclick="editAction('BAJA')"  value="Baja">
-				<input type="button" onclick="editAction('HIJO')"  value="+Hijo">
-				<input type="button" onclick="editAction('ARCO')"  value="+Arco">
+				<input type="button" onclick="editAction('BAJA')"  value="Baja"><br>
+				<input type="button" onclick="editAction('+NODO')" value="+Nodo">
+				<input type="button" onclick="editAction('+HIJO')" value="+Hijo">
+				<input type="button" onclick="editAction('+ARCO')" value="+Arco">
 			</form>
 		</div>
 	</div>

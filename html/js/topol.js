@@ -30,6 +30,8 @@ function nuevaTopol(){
 	if (t == {}) return null;
 	utils.r$('topol').innerHTML = utils.o2s(t.meta);
 	utils.vgk.topol = t;
+	showTopol();
+	grabaTopol();
 }
 
 
@@ -46,7 +48,7 @@ function borraTopol(){
 	console.log('Borrando ',utils.vgk.topolId);
 }
 //------------------------------------------------------------------- Edit
-
+/*
 function addNodo(){
 	if (!utils.vgk.topol) return;
 	var nodo = null;
@@ -70,7 +72,7 @@ function addNodo(){
 	console.log('addNodo ',utils.o2s(nodo));
 	showTopol();
 }
-
+*/
 //------------------------------------------------------------------- Show
 function montaArbolUL(ul,nodo,editON){
 	var li = utils.rEl$('li'); 
@@ -155,9 +157,9 @@ function montaTablaGrafo(taula,editON){
 			if (arcIx > -1)tdx.innerHTML= arcos[arcIx].tag;
 			if (editON){
 				tdx.onclick = function(ev){
-					utils.r$('tag').value = ev.target.id;
-					utils.r$('id0').value = null;
-					console.log(ev.target.id);
+					utils.r$('tag').value = tdx.innerHTML || 'x';
+					utils.r$('id0').value = ev.target.id;
+					utils.r$('rol').value = 'ARCO';
 					}
 				}
 
@@ -237,6 +239,7 @@ function editTopol(){
 					txt.onclick = function(){
 						utils.r$('tag').value = nodo.tag;
 						utils.r$('id0').value = nodo.id0;
+						utils.r$('rol').value = nodo.rol;
 					}
 					divShow.appendChild(txt);
 				})
@@ -253,6 +256,7 @@ function editTopol(){
 					txt.onclick = function(){
 						utils.r$('tag').value = nodo.tag;
 						utils.r$('id0').value = nodo.id0;
+						utils.r$('rol').value = nodo.rol;
 					}
 					ul.appendChild(txt);
 				})
@@ -273,66 +277,6 @@ function editTopol(){
 
 		case 'GRAFO':
 			var taula = utils.rEl$('table');
-/*
-			var cap = utils.rEl$('thead');
-			var cos = utils.rEl$('tbody');
-			taula.appendChild(cap);
-			taula.appendChild(cos);
-
-			var nodos = t.getNodos();
-			var arcos = t.getArcos();
-
-			var arcsIds = [];
-			arcos.map(function(arco){
-				var idArc = ''+arco.ixI+':'+arco.ixF;
-				arcsIds.push(idArc);
-			})
-			var trh = utils.rEl$('tr');
-			var th0 = utils.rEl$('th');
-			trh.appendChild(th0);
-
-			nodos.map(function(nodo){
-				var thx = utils.rEl$('th');
-				thx.innerHTML = nodo.tag;
-					thx.onclick = function(ev){
-						ev.stopImmediatePropagation();
-						utils.r$('tag').value = nodo.tag;
-						utils.r$('id0').value = nodo.id0;
-					}
-				trh.appendChild(thx);
-			})
-			cap.appendChild(trh);
-
-			var trCount = 0;
-			nodos.map(function(nodo){
-				var trb = utils.rEl$('tr');
-				var td0 = utils.rEl$('td');
-				td0.innerHTML = nodo.tag;
-				td0.onclick = function(ev){
-					utils.r$('tag').value = nodo.tag;
-					utils.r$('id0').value = nodo.id0;
-				}
-				trb.appendChild(td0);
-
-				for (var i=0;i<nodos.length;i++){
-					var tdx = utils.rEl$('td');
-					tdx.id = ''+trCount+':'+i;
-					var ixArc = arcsIds.indexOf(tdx.id);
-					if ( ixArc > -1) tdx.innerHTML = arcos[ixArc].tag
-//					tdx.innerHTML = tdx.id;
-					tdx.onclick = function(ev){
-						utils.r$('tag').value = ev.target.id;
-						utils.r$('id0').value = null;
-						console.log(ev.target.id);
-						return false;
-					}
-					trb.appendChild(tdx);
-
-				}
-				cos.appendChild(trb);
-				trCount++;
-			})
-*/
 			montaTablaGrafo(taula,true);
 			utils.r$('show').appendChild(taula);
 			break;
@@ -344,23 +288,105 @@ function editTopol(){
 
 }
 
+
 function editAction(acc){
 	var t = utils.vgk.topol;
 	var tag = utils.r$('tag').value;
 	var id0 = utils.r$('id0').value;
-	if (id0) var nodo = t.getNodoById(id0);
-	console.log('editAction:', acc, utils.o2s(nodo));
-	if (acc == 'GRABA'){
+	var rol = utils.r$('rol').value;
+
+	switch(acc){
+		case 'GRABA':
+			if (rol == 'NODO' && id0){
+				var nodo = t.getNodoById(id0);
+				t.updtNodoSelf(nodo);
+			}
+			else if (rol == 'ARCO' && id0){
+				console.log(tag,id0,rol);
+				var ixs = id0.split(':');
+				var ixI = parseInt(ixs[0]);
+				var ixF = parseInt(ixs[1]);
+				var arco = t.getArcoByIxs(ixI,ixF);
+				arco.tag = tag;
+				t.updtArcoSelf(arco); 
+			}
+			break;
+		case 'BORRA':
+			if (rol == 'NODO' && id0){
+				var nodo = t.getNodoById(id0);
+				t.borraNodo(nodo);
+			}
+			break;
+		case 'SUBE':
+			if (rol == 'NODO' && id0){
+				var nodo = t.getNodoById(id0);
+				t.subeNodo(nodo);
+			}
+			break;
+		case 'BAJA':
+			if (rol == 'NODO' && id0){
+				var nodo = t.getNodoById(id0);
+				t.bajaNodo(nodo);
+			}
+			break;
+		case '+NODO':
+			var tag = utils.r$('tag').value;
+			var nodo = new topol.rNodo(tag ||'Nuevo');
+			t.addNodoSelf(nodo);
+			break;
+		case '+HIJO':
+			if (utils.vgk.topol_t != 'ARBOL') return;
+			var padre = t.getNodoById(id0);
+			var tag = utils.r$('tag').value;
+			var hijo = new topol.rNodo(tag ||'Nuevo');
+			t.addNodoHijo(padre,hijo);
+			break;
+		case '+ARCO':
+			if (utils.vgk.topol_t != 'GRAFO') return;
+			var tag = utils.r$('tag').value;
+			var ixs = id0.split(':');
+			var ixI = parseInt(ixs[0]);
+			var ixF = parseInt(ixs[1]);
+			var nodoI = t.getNodoByIx(ixI);
+			var nodoF = t.getNodoByIx(ixF);
+			var arco = new topol.rArco(tag || 'x',nodoI,nodoF,0);
+			console.log('Arco:',utils.o2s(arco));
+			t.addArcoSelf(arco);
+			break;
+
+	}
+	utils.r$('frmEdit').style.display= 'none';
+	showTopol();
+}
+/*
+function editAction(acc){
+	var t = utils.vgk.topol;
+	var tag = utils.r$('tag').value;
+	var id0 = utils.r$('id0').value;
+	var rol = utils.r$('rol').value;
+
+	if (id0 && rol== 'NODO') var nodo = t.getNodoById(id0);
+
+	if (acc == 'GRABA' && rol== 'NODO'){
 		nodo.tag = tag;
 		t.updtNodoSelf(nodo);
 		}
 
-	else if ( acc == 'BORRA'){t.borraNodo(nodo);}
+	if (acc == 'GRABA' && rol== 'ARCO'){
+		nodo.tag = tag;
+		t.updtNodoSelf(nodo);
+		}
+	else if ( acc == 'BORRA' && rol== 'NODO'){t.borraNodo(nodo);}
 	
-	else if (acc == 'SUBE'){t.subeNodo(nodo);}
+	else if (acc == 'SUBE' && rol== 'NODO'){t.subeNodo(nodo);}
 	
-	else if (acc == 'BAJA'){t.bajaNodo(nodo);}
+	else if (acc == 'BAJA' && rol== 'NODO'){t.bajaNodo(nodo);}
 
+	else if (acc == 'NODO'){
+		var tag = utils.r$('tag').value;
+		var nodo = new topol.rNodo(tag ||'Nuevo');
+		t.addNodoSelf(nodo);
+	}
 	else if (acc == 'HIJO' && utils.vgk.topol_t == 'ARBOL'){
 		var hijo = new topol.rNodo('Nuevo');
 		t.addNodoHijo(nodo,hijo);
@@ -380,6 +406,7 @@ function editAction(acc){
 	utils.r$('frmEdit').style.display= 'none';
 	showTopol();
 }
+*/
 //------------------------------------------------------------------- Ajax
 
 
@@ -426,7 +453,8 @@ function ecoCargaTopol(objDB){
 
 	t.objDB2Clase(objDB);
 	utils.vgk.topol = t;
-	utils.r$('topol').innerHTML = utils.o2s(t.meta);
+//	utils.r$('topol').innerHTML = utils.o2s(t.meta);
+	showTopol();
 }
 
 function cargaTopol(elem){
@@ -481,6 +509,7 @@ function cambiaTipo(valor){
 	utils.r$('topol').innerHTML = null;
 	utils.r$('lista').innerHTML = null;
 	utils.r$('show').innerHTML = null;
+	listaTopol();
 }
 
 window.onload = initTopol;
@@ -492,7 +521,6 @@ window.listaTopol = listaTopol;
 window.showTopol  = showTopol;
 window.editTopol  = editTopol;
 window.updateTopol= updateTopol;
-window.addNodo    = addNodo;
 
 window.editAction = editAction;
 window.vgApp = vgApp;
