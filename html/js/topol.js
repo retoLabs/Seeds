@@ -106,7 +106,8 @@ function montaTablaGrafo(taula,editON){
 	var arcos = t.getArcos();
 	var arcIds = [];
 	arcos.map(function(arc){
-		var idArc = ''+arc.nodoI+':'+arc.nodoF;
+		console.log('taula', utils.o2s(arc));
+		var idArc = ''+arc.ixI+':'+arc.ixF;
 		arcIds.push(idArc);
 	})
 
@@ -396,7 +397,7 @@ function editAction(acc){
 				var ixF = parseInt(ixs[1]);
 				var nodoI = t.getNodoByIx(ixI);
 				var nodoF = t.getNodoByIx(ixF);
-				var arco = new topol.rArco(tag || 'x',nodoI,nodoF);
+				var arco = new topol.rArco(tag || 'x',nodoI.id0,nodoF.id0);
 				console.log('Arco:',utils.o2s(arco));
 				t.addArcoSelf(arco);
 			}
