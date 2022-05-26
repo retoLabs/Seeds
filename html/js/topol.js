@@ -45,6 +45,7 @@ function borraTopol(){
 		case 'LISTA' :
 		case 'ARBOL' :
 		case 'GRAFO' :
+		case 'MALLA' :
 			ajax.borraTopol(utils.vgk.topolId);
 			break;
 	}
@@ -161,6 +162,7 @@ function montaTablaMalla(taula,editON){
 	var nrows = t.getNodosRow();
 	var ncols = t.getNodosCol();
 	var arcos = t.getArcos();
+	console.log(utils.o2s(arcos));
 	var arcIds = [];
 	arcos.map(function(arc){
 		var idArc = ''+arc.ixI+':'+arc.ixF;
@@ -408,7 +410,7 @@ function editAction(acc){
 				var ixF = parseInt(ixs[1]);
 				var nodoI = t.getColByIx(ixI);
 				var nodoF = t.getRowByIx(ixF);
-				var arco = new topol.rArco(tag || 'x',nodoI,nodoF);
+				var arco = new topol.rArco(tag || 'x',nodoI.id0,nodoF.id0);
 				console.log('Arco:',utils.o2s(arco));
 				t.addArcoSelf(arco);
 			}
