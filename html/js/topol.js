@@ -107,7 +107,7 @@ function montaTablaGrafo(taula,editON){
 	var arcos = t.getArcos();
 	var arcIds = [];
 	arcos.map(function(arc){
-		console.log('taula', utils.o2s(arc));
+//		console.log('taula', utils.o2s(arc));
 		var idArc = ''+arc.ixI+':'+arc.ixF;
 		arcIds.push(idArc);
 	})
@@ -490,10 +490,7 @@ function ecoCargaTopol(objDB){
 }
 
 function cargaTopol(elem){
-	ajax.getTopol(elem.value,ecoCargaTopol);
-}
-
-function ecoListaTopols(objs){
+	ajax.getTopol(elem.value,ecoCargaTopol);function ecoListaTopols(objs){
 	var form = utils.r$('lista');
 	form.innerHTML = null;
 
@@ -507,6 +504,9 @@ function ecoListaTopols(objs){
 		select.appendChild(opt);
 	})
 	form.appendChild(select);
+}
+
+
 }
 
 function listaTopol(tipo){
